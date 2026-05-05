@@ -1,0 +1,193 @@
+# cURL Commands for All APIs
+# Server: http://localhost:4567
+# Note: Replace placeholders like {id}, {token}, etc. with actual values.
+# For authenticated endpoints, include Authorization header if needed.
+
+## Authentication
+# Login to get JWT token
+curl -X POST http://localhost:4567/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "your_username", "password": "your_password"}'
+
+## Admin URL Requests
+# Get all URL requests
+curl -X GET http://localhost:4567/api/admin/url-requests \
+  -H "Authorization: Bearer {token}"
+
+# Get URL request by ID
+curl -X GET http://localhost:4567/api/admin/url-requests/{id} \
+  -H "Authorization: Bearer {token}"
+
+# Create URL request
+curl -X POST http://localhost:4567/api/admin/url-requests \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "baseUrl": "https://example.com",
+    "tile": "tile1",
+    "description": "Test URL",
+    "application": {"id": 1},
+    "environment": {"id": 1},
+    "section": {"id": 1}
+  }'
+
+# Update URL request
+curl -X PUT http://localhost:4567/api/admin/url-requests/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "baseUrl": "https://updated.com",
+    "tile": "tile1",
+    "description": "Updated URL",
+    "application": {"id": 1},
+    "environment": {"id": 1},
+    "section": {"id": 1}
+  }'
+
+# Delete URL request
+curl -X DELETE http://localhost:4567/api/admin/url-requests/{id} \
+  -H "Authorization: Bearer {token}"
+
+## Admin Tiles
+# Get all tiles
+curl -X GET http://localhost:4567/api/admin/tiles \
+  -H "Authorization: Bearer {token}"
+
+# Get tile by ID
+curl -X GET http://localhost:4567/api/admin/tiles/{id} \
+  -H "Authorization: Bearer {token}"
+
+# Create tile
+curl -X POST http://localhost:4567/api/admin/tiles \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "tileId": "tile123",
+    "name": "My Tile",
+    "section": {"id": 1}
+  }'
+
+# Update tile
+curl -X PUT http://localhost:4567/api/admin/tiles/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "tileId": "tile123",
+    "name": "Updated Tile",
+    "section": {"id": 1}
+  }'
+
+# Patch tile
+curl -X PATCH http://localhost:4567/api/admin/tiles/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "Patched Tile"
+  }'
+
+# Delete tile
+curl -X DELETE http://localhost:4567/api/admin/tiles/{id} \
+  -H "Authorization: Bearer {token}"
+
+## Admin Applications
+# Get all applications
+curl -X GET http://localhost:4567/api/admin/applications \
+  -H "Authorization: Bearer {token}"
+
+# Get application by ID
+curl -X GET http://localhost:4567/api/admin/applications/{id} \
+  -H "Authorization: Bearer {token}"
+
+# Create application
+curl -X POST http://localhost:4567/api/admin/applications \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "My App",
+    "description": "Application description"
+  }'
+
+# Update application
+curl -X PUT http://localhost:4567/api/admin/applications/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "Updated App",
+    "description": "Updated description"
+  }'
+
+# Delete application
+curl -X DELETE http://localhost:4567/api/admin/applications/{id} \
+  -H "Authorization: Bearer {token}"
+
+## Admin Sections
+# Get all sections
+curl -X GET http://localhost:4567/api/admin/sections \
+  -H "Authorization: Bearer {token}"
+
+# Get section by ID
+curl -X GET http://localhost:4567/api/admin/sections/{id} \
+  -H "Authorization: Bearer {token}"
+
+# Create section
+curl -X POST http://localhost:4567/api/admin/sections \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "Section 1",
+    "application": {"id": 1}
+  }'
+
+# Update section
+curl -X PUT http://localhost:4567/api/admin/sections/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "Updated Section",
+    "application": {"id": 1}
+  }'
+
+# Delete section
+curl -X DELETE http://localhost:4567/api/admin/sections/{id} \
+  -H "Authorization: Bearer {token}"
+
+## Admin Environments
+# Get all environments
+curl -X GET http://localhost:4567/api/admin/environments \
+  -H "Authorization: Bearer {token}"
+
+# Get environment by ID
+curl -X GET http://localhost:4567/api/admin/environments/{id} \
+  -H "Authorization: Bearer {token}"
+
+# Create environment
+curl -X POST http://localhost:4567/api/admin/environments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "DEV",
+    "region": "US-East-1"
+  }'
+
+# Update environment
+curl -X PUT http://localhost:4567/api/admin/environments/{id} \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer {token}" \
+  -d '{
+    "name": "PROD",
+    "region": "US-West-2"
+  }'
+
+# Delete environment
+curl -X DELETE http://localhost:4567/api/admin/environments/{id} \
+  -H "Authorization: Bearer {token}"
+
+## Dashboard
+# Get all URLs with pagination
+curl -X GET "http://localhost:4567/api/dashboard/urls?page=0&size=10" \
+  -H "Authorization: Bearer {token}"
+
+## Status Check (Parallel Streams)
+# Get status from all APIs in parallel
+curl -X GET http://localhost:4567/api/status/all \
+  -H "Authorization: Bearer {token}"
