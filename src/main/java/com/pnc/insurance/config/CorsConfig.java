@@ -14,14 +14,30 @@ public class CorsConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/api/**")
-                        "http://localhost:3000",
+                        .allowedOrigins(
+                                "http://localhost:3000",
                                 "http://localhost:5173",
                                 "http://localhost:5174",
                                 "https://vm-service-slide-1.onrender.com"
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*");
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
+                // Allow CORS for auth endpoints as well
+                registry.addMapping("/auth/**")
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://vm-service-slide-1.onrender.com"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
-            //cross gobally config
         };
     }
 }
