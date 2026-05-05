@@ -52,4 +52,15 @@ public class UrlRequest extends UrlResponseDto {
     @OneToMany(mappedBy = "url", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AppHealthHistory> healthHistory;
 
+    // For parallel URL calls
+    @Transient
+    private List<String> urls;
+
+    public List<String> getUrls() {
+        return urls;
+    }
+
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
 }

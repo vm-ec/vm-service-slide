@@ -16,6 +16,10 @@ public class UrlResponseDto {
     private Long sectionId;
     private String sectionName;
 
+    // For parallel URL call results
+    private Integer status;
+    private String body;
+
     // ================= GETTERS =================
 
     public Long getId() {
@@ -58,6 +62,15 @@ public class UrlResponseDto {
         return sectionName;
     }
 
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
     // ================= SETTERS =================
 
     public void setId(Long id) {
@@ -98,5 +111,13 @@ public class UrlResponseDto {
 
     public void setSectionName(String sectionName) {
         this.sectionName = sectionName;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 }

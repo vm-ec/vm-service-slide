@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for retrieving API status and health information.
  * Provides comprehensive status of all APIs including applications, sections, environments, tiles, and URLs.
  */
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/status")
 @RequiredArgsConstructor

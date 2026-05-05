@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VM Service Slide - API Dashboard</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg-dark: #1e293b;
+            --bg-light: #f8fafc;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body { display: flex; height: 100vh; background-color: var(--bg-light); color: var(--text-main); }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--bg-dark); color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 1.2rem; font-weight: bold; border-bottom: 1px solid #334155; }
+        .nav-list { list-style: none; padding: 20px 0; flex: 1; overflow-y: auto; }
+        .nav-item { padding: 12px 20px; cursor: pointer; transition: background 0.2s; }
+        .nav-item:hover, .nav-item.active { background-color: var(--primary); }
+        .nav-category { font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; padding: 10px 20px; margin-top: 10px; }
+
+        /* Main Content */
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .section { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .section.active { display: block; }
+        
+        h1 { margin-bottom: 10px; color: #0f172a; }
+        p { color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+        h2 { margin: 20px 0 10px; color: #0f172a; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+
+        /* API Badges */
+        .endpoint { display: flex; align-items: center; background: var(--bg-light); padding: 15px; border-radius: 6px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .method { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 0.85rem; margin-right: 15px; color: white; }
+        .method.get { background-color: #10b981; }
+        .method.post { background-color: var(--primary); }
+        .method.delete { background-color: #ef4444; }
+        .path { font-family: monospace; font-size: 1rem; color: #0f172a; }
+
+        /* Code Blocks */
+        pre { background: #0f172a; color: #e2e8f0; padding: 15px; border-radius: 6px; overflow-x: auto; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-header">VM Service Slide</div>
+        <ul class="nav-list">
+            <li class="nav-item active" onclick="showSection('overview')">Overview</li>
+            <div class="nav-category">Capabilities</div>
+            <li class="nav-item" onclick="showSection('capabilities')">Core Features</li>
+            <div class="nav-category">API Reference</div>
+            <li class="nav-item" onclick="showSection('api-slides')">Slides API</li>
+            <li class="nav-item" onclick="showSection('api-auth')">Authentication</li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        
+        <div id="overview" class="section active">
+            <h1>Welcome to VM Service Slide</h1>
+            <p>This dashboard provides documentation, capabilities, and API references for the VM Service Slide repository.</p>
+            
+            <h2>Quick Start</h2>
+            <p>To get started with the API, you will need to authenticate and obtain a Bearer token.</p>
+            <pre><code>curl -X GET "https://api.yourdomain.com/health"</code></pre>
+        </div>
+
+        <div id="capabilities" class="section">
+            <h1>System Capabilities</h1>
+            <p>The VM Service Slide provides the following core functionalities:</p>
+            <ul>
+                <li><strong>Slide Generation:</strong> Programmatically generate presentation slides from raw data.</li>
+                <li><strong>Template Management:</strong> Store, retrieve, and version custom slide templates.</li>
+                <li><strong>Exporting:</strong> Export compiled slides to PDF, PPTX, and HTML formats.</li>
+            </ul>
+        </div>
+
+        <div id="api-slides" class="section">
+            <h1>Slides API</h1>
+            <p>Use these endpoints to manage your slide decks.</p>
+
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/slides</span>
+            </div>
+            <p>Retrieves a paginated list of all slide decks associated with the authenticated user.</p>
+
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/slides/generate</span>
+            </div>
+            <p>Creates a new slide deck based on the provided JSON payload.</p>
+            <pre><code>{
+  "template_id": "temp_123",
+  "title": "Q3 Report",
+  "content": [...]
+}</code></pre>
+
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <span class="path">/api/v1/slides/{id}</span>
+            </div>
+            <p>Permanently removes a slide deck from the system.</p>
+        </div>
+
+        <div id="api-auth" class="section">
+            <h1>Authentication</h1>
+            <p>All API requests require a valid JWT token passed in the Authorization header.</p>
+            <pre><code>Authorization: Bearer YOUR_ACCESS_TOKEN</code></pre>
+        </div>
+
+    </div>
+
+    <script>
+        // Simple script to handle navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            // Remove active class from nav items
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Highlight selected nav item
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+</body>
+</html>
