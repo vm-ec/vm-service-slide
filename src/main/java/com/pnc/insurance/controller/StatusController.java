@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for retrieving API status and health information.
  * Provides comprehensive status of all APIs including applications, sections, environments, tiles, and URLs.
  */
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/api/status")
 @RequiredArgsConstructor

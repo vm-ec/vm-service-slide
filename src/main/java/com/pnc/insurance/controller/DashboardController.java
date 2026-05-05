@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Controller for dashboard operations to fetch data for display.
  * Provides paginated access to URL data for dashboard visualization.
  */
-@CrossOrigin(origins = "*")
+
 @RestController
 @RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
