@@ -16,7 +16,6 @@ public class UrlResponseDto {
     private Long sectionId;
     private String sectionName;
 
-    // For parallel URL call results
     private Integer status;
     private String body;
 
