@@ -19,7 +19,6 @@ import java.util.List;
  * Controller for managing admin operations including URL requests, tiles, applications, sections, and environments.
  * Provides CRUD endpoints for various slide deck components.
  */
-
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor

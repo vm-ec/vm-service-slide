@@ -191,3 +191,17 @@ curl -X GET "http://localhost:4567/api/dashboard/urls?page=0&size=10" \
 # Get status from all APIs in parallel
 curl -X GET http://localhost:4567/api/status/all \
   -H "Authorization: Bearer {token}"
+
+## URLs Parallel
+# Fetch a list of URLs
+curl -X GET http://localhost:4567/api/urls-parallel/fetch
+
+# Call all URLs in parallel and return their statuses
+curl -X POST http://localhost:4567/api/urls-parallel/call \
+  -H "Content-Type: application/json" \
+  -d '{
+    "urls": [
+      "https://example.com/api1",
+      "https://example.com/api2"
+    ]
+  }'
