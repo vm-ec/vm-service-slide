@@ -16,9 +16,9 @@ public class CorsConfig {
                 registry.addMapping("/api/**")
                         .allowedOriginPatterns(
                                 "http://localhost:3000",
-                                "http://localhost:5173",
+                                "http://localhost:5173/**",
                                 "http://localhost:5174",
-                                "https://vm-service-slide-1.onrender.com",
+                                "https://vm-service-slide-1.onrender.com/**",
                                 "https://.*\\.onrender\\.com"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
@@ -54,7 +54,21 @@ public class CorsConfig {
                         .allowCredentials(true)
                         .maxAge(3600);
 
+
                 // Allow CORS for dashboard endpoints
+                registry.addMapping("/url-requests/**")
+                        .allowedOriginPatterns(
+                                "http://localhost:3000",
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
+                        )
+                        .allowedMethods("GET", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
                 registry.addMapping("/dashboard/**")
                         .allowedOriginPatterns(
                                 "http://localhost:3000",

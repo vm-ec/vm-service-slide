@@ -1,0 +1,48 @@
+I am facing a CORS error in my Spring Boot application with Spring Security (6.x) and JWT.
+
+Error:
+"Access to fetch at 'https://vm-service-slide-1.onrender.com/api/admin/url-requests' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource."
+
+Setup details:
+
+* Backend: Spring Boot + Spring Security + JWT filter
+* Frontend: Vite (http://localhost:5173)
+* Deployment: Backend hosted on Render
+* Endpoint: GET /api/admin/url-requests (secured endpoint)
+
+SecurityConfig:
+
+* Using SecurityFilterChain
+* Stateless session
+* JWT filter added before UsernamePasswordAuthenticationFilter
+* OPTIONS requests permitted
+
+CORS:
+
+* Tried WebMvcConfigurer (CorsConfig)
+* Tried CorsConfigurationSource bean
+* Using .cors(cors -> ...)
+
+Problem:
+
+* Preflight OPTIONS request is failing
+* No Access-Control-Allow-Origin header in response
+
+Need help with:
+
+1. Identifying why CORS headers are not returned
+2. Checking if JwtAuthenticationFilter is blocking OPTIONS
+3. Correct configuration for Spring Security 6+
+4. Fixing Render deployment issues (if any)
+
+Please review:
+
+* SecurityConfig
+* JwtAuthenticationFilter
+* CORS configuration
+
+And provide:
+
+* Exact issue
+* Minimal fix (not generic advice)
+* Working configuration
