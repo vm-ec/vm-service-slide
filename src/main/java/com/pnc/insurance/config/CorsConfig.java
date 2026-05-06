@@ -18,9 +18,10 @@ public class CorsConfig {
                                 "http://localhost:3000",
                                 "http://localhost:5173",
                                 "http://localhost:5174",
-                                "https://vm-service-slide-1.onrender.com"
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
                         .maxAge(3600);
@@ -31,9 +32,52 @@ public class CorsConfig {
                                 "http://localhost:3000",
                                 "http://localhost:5173",
                                 "http://localhost:5174",
-                                "https://vm-service-slide-1.onrender.com"
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
                         )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
+                // Allow CORS for URLs parallel endpoints
+                registry.addMapping("/urls-parallel/**")
+                        .allowedOriginPatterns(
+                                "http://localhost:3000",
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
+                        )
+                        .allowedMethods("GET", "POST", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
+                // Allow CORS for dashboard endpoints
+                registry.addMapping("/dashboard/**")
+                        .allowedOriginPatterns(
+                                "http://localhost:3000",
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
+                        )
+                        .allowedMethods("GET", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
+
+                // Allow CORS for status endpoints
+                registry.addMapping("/status/**")
+                        .allowedOriginPatterns(
+                                "http://localhost:3000",
+                                "http://localhost:5173",
+                                "http://localhost:5174",
+                                "https://vm-service-slide-1.onrender.com",
+                                "https://.*\\.onrender\\.com"
+                        )
+                        .allowedMethods("GET", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
                         .maxAge(3600);

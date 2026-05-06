@@ -23,12 +23,18 @@ curl -X POST http://localhost:4567/api/admin/url-requests \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer {token}" \
   -d '{
-    "baseUrl": "https://example.com",
-    "tile": "tile1",
-    "description": "Test URL",
-    "application": {"id": 1},
-    "environment": {"id": 1},
-    "section": {"id": 1}
+    "baseUrl": "https://api.example.com",
+    "tile": "DASHBOARD_POLICIES",
+    "description": "Policy management dashboard",
+    "application": {
+      "id": 1
+    },
+    "environment": {
+      "id": 1
+    },
+    "section": {
+      "id": 1
+    }
   }'
 
 # Update URL request
@@ -201,7 +207,7 @@ curl -X POST http://localhost:4567/api/urls-parallel/call \
   -H "Content-Type: application/json" \
   -d '{
     "urls": [
-      "https://example.com/api1",
-      "https://example.com/api2"
+      "https://www.google.com",
+      "https://www.github.com"
     ]
   }'

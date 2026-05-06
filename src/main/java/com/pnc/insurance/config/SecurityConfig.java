@@ -25,10 +25,18 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
+                // Allow OPTIONS preflight requests (CORS) - must be first
+                .requestMatchers("OPTIONS").permitAll()
+                // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/admin/**").authenticated()
+                .requestMatchers("/api/urls-parallel/fetch").permitAll()
+                .requestMatchers("/api/urls-parallel/call").permitAll()
                 // Swagger/OpenAPI endpoints
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                // Protected endpoints
+                .requestMatchers("/api/admin/**").authenticated()
+                .requestMatchers("/api/dashboard/**").authenticated()
+                .requestMatchers("/api/status/**").authenticated()
                 .requestMatchers("/api/service-registry/**").authenticated()
                 .anyRequest().authenticated()
             )

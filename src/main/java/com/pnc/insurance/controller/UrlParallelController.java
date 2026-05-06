@@ -1,6 +1,6 @@
 package com.pnc.insurance.controller;
 
-import com.pnc.insurance.model.UrlRequest;
+import com.pnc.insurance.dto.UrlParallelRequest;
 import com.pnc.insurance.model.UrlResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +40,7 @@ public class UrlParallelController {
     @Operation(
         summary = "Call all URLs in parallel and return their statuses",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-            content = @Content(schema = @Schema(implementation = UrlRequest.class))
+            content = @Content(schema = @Schema(implementation = UrlParallelRequest.class))
         ),
         responses = {
             @ApiResponse(responseCode = "200", description = "Results for each URL",
@@ -48,7 +48,7 @@ public class UrlParallelController {
         }
     )
     @PostMapping("/call")
-    public ResponseEntity<List<UrlResponseDto>> callUrlsInParallel(@Valid @RequestBody UrlRequest request) {
+    public ResponseEntity<List<UrlResponseDto>> callUrlsInParallel(@Valid @RequestBody UrlParallelRequest request) {
         return ResponseEntity.ok(urlParallelService.callUrlsInParallel(request.getUrls()));
     }
 
