@@ -6,6 +6,7 @@ import com.pnc.insurance.service.UrlRequestService;
 import com.pnc.insurance.dto.UrlRequestCreateDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UrlRequestServiceImpl implements UrlRequestService {
 
     private final UrlRequestRepository urlRepo;
@@ -59,6 +61,7 @@ public class UrlRequestServiceImpl implements UrlRequestService {
 
     // ✅ CREATE
     @Override
+    @Transactional
     public UrlResponseDto saveUrlRequest(UrlRequestCreateDto requestDto) {
 
         UrlRequest url = new UrlRequest();
@@ -77,6 +80,7 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         }
 
         UrlRequest savedUrl = urlRepo.save(url);
+        System.out.println("✅ URL Request saved successfully - ID: " + savedUrl.getId() + ", Tile: " + savedUrl.getTile());
 
         // Re-fetch to ensure relationships are loaded
         return mapToDto(urlRepo.findById(savedUrl.getId()).orElse(savedUrl));
@@ -84,18 +88,23 @@ public class UrlRequestServiceImpl implements UrlRequestService {
 
     // ✅ UPDATE
     @Override
+    @Transactional
     public UrlResponseDto updateUrlRequest(Long id, UrlRequest request) {
 
         UrlRequest existing = urlRepo.findById(id).orElse(null);
 
         if (existing == null) {
-            return null; // or throw if needed
+            return null; // Return null if not found (404)
         }
 
+        // Store old URL for comparison
+        String oldBaseUrl = existing.getBaseUrl();
+
+        // Map request data to existing entity
         mapRequestToEntity(request, existing);
 
         // ✅ Re-check status if URL was updated
-        if (!existing.getBaseUrl().equals(request.getBaseUrl())) {
+        if (oldBaseUrl != null && !oldBaseUrl.equals(existing.getBaseUrl())) {
             try {
                 int updatedStatus = checkUrlStatus(existing.getBaseUrl());
                 existing.setStatus(updatedStatus);
@@ -105,11 +114,16 @@ public class UrlRequestServiceImpl implements UrlRequestService {
             }
         }
 
-        return mapToDto(urlRepo.save(existing));
+        // Save and persist changes to database
+        UrlRequest saved = urlRepo.save(existing);
+        System.out.println("✅ URL Request updated successfully - ID: " + saved.getId() + ", Tile: " + saved.getTile() + ", URL: " + saved.getBaseUrl());
+
+        return mapToDto(saved);
     }
 
     // ✅ DELETE
     @Override
+    @Transactional
     public boolean deleteUrlRequest(Long id) {
 
         UrlRequest url = urlRepo.findById(id)
@@ -121,7 +135,8 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         }
 
         urlRepo.delete(url);
-        return false;
+        System.out.println("✅ URL Request deleted successfully - ID: " + id);
+        return true;
     }
 
     // ===============================
@@ -135,21 +150,41 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         entity.setDescription(request.getDescription());
         entity.setStatus(request.getStatus());
 
-        // ✅ Application (no exception)
+        // ✅ Application - Check both nested object AND flat applicationId field
         if (request.getApplication() != null && request.getApplication().getId() != null) {
+            // If nested object exists, use it
             appRepo.findById(request.getApplication().getId())
+                    .ifPresent(entity::setApplication);
+        } else if (request.getApplicationId() != null) {
+            // Otherwise check for flat applicationId field (from UrlResponseDto)
+            appRepo.findById(request.getApplicationId())
                     .ifPresent(entity::setApplication);
         }
 
-        // ✅ Environment (no exception)
+        // ✅ Environment - Check both nested object AND flat environmentId field
         if (request.getEnvironment() != null && request.getEnvironment().getId() != null) {
+            // If nested object exists, use it
             envRepo.findById(request.getEnvironment().getId())
                     .ifPresent(entity::setEnvironment);
+        } else if (request.getEnvironmentId() != null) {
+            // Otherwise check for flat environmentId field (from UrlResponseDto)
+            try {
+                Long envId = Long.valueOf(request.getEnvironmentId().toString());
+                envRepo.findById(envId)
+                        .ifPresent(entity::setEnvironment);
+            } catch (Exception e) {
+                System.err.println("⚠️ Invalid environmentId format: " + request.getEnvironmentId());
+            }
         }
 
-        // ✅ Section (no exception)
+        // ✅ Section - Check both nested object AND flat sectionId field
         if (request.getSection() != null && request.getSection().getId() != null) {
+            // If nested object exists, use it
             sectionRepo.findById(request.getSection().getId())
+                    .ifPresent(entity::setSection);
+        } else if (request.getSectionId() != null) {
+            // Otherwise check for flat sectionId field (from UrlResponseDto)
+            sectionRepo.findById(request.getSectionId())
                     .ifPresent(entity::setSection);
         }
     }
@@ -161,19 +196,19 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         entity.setDescription(requestDto.getDescription());
         entity.setStatus(requestDto.getStatus());
 
-        // ✅ Application (no exception)
+        // ✅ Application (no exception) - Check nested object
         if (requestDto.getApplication() != null && requestDto.getApplication().getId() != null) {
             appRepo.findById(requestDto.getApplication().getId())
                     .ifPresent(entity::setApplication);
         }
 
-        // ✅ Environment (no exception)
+        // ✅ Environment (no exception) - Check nested object
         if (requestDto.getEnvironment() != null && requestDto.getEnvironment().getId() != null) {
             envRepo.findById(requestDto.getEnvironment().getId())
                     .ifPresent(entity::setEnvironment);
         }
 
-        // ✅ Section (no exception)
+        // ✅ Section (no exception) - Check nested object
         if (requestDto.getSection() != null && requestDto.getSection().getId() != null) {
             sectionRepo.findById(requestDto.getSection().getId())
                     .ifPresent(entity::setSection);
@@ -217,6 +252,7 @@ public class UrlRequestServiceImpl implements UrlRequestService {
      * Uses parallel streams for efficient processing
      */
     @Scheduled(fixedRate = 900000) // 15 minutes = 900,000 milliseconds
+    @Transactional
     public void updateAllUrlStatuses() {
         System.out.println("🔄 Starting scheduled URL status update...");
 
@@ -265,6 +301,7 @@ public class UrlRequestServiceImpl implements UrlRequestService {
     }
 
     // ✅ PUBLIC METHOD: Check and update URL status
+    @Transactional
     public int checkAndUpdateUrlStatus(Long id) {
         UrlRequest url = urlRepo.findById(id).orElse(null);
         if (url == null) {

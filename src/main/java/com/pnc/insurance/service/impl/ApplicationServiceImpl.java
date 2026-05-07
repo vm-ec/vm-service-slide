@@ -4,10 +4,12 @@ import com.pnc.insurance.model.SlideApplication;
 import com.pnc.insurance.repository.SlideApplicationRepository;
 import com.pnc.insurance.service.ApplicationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public class ApplicationServiceImpl implements ApplicationService {
 
     private final SlideApplicationRepository applicationRepository;
@@ -32,14 +34,25 @@ public class ApplicationServiceImpl implements ApplicationService {
     }
 
     @Override
+    @Transactional
     public SlideApplication updateApplication(Long id, SlideApplication application) {
         SlideApplication existing = applicationRepository.findById(id).orElse(null);
         if (existing == null) {
             return null;
         }
-        existing.setName(application.getName());
-        existing.setDescription(application.getDescription());
-        return applicationRepository.save(existing);
+
+        // Update application fields from request body
+        if (application.getName() != null && !application.getName().isEmpty()) {
+            existing.setName(application.getName());
+        }
+        if (application.getDescription() != null && !application.getDescription().isEmpty()) {
+            existing.setDescription(application.getDescription());
+        }
+
+        // Save the updated application (changes will be persisted to database)
+        SlideApplication saved = applicationRepository.save(existing);
+        System.out.println("✅ Application updated successfully - ID: " + saved.getId() + ", Name: " + saved.getName());
+        return saved;
     }
 
     @Override
