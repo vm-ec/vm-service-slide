@@ -3,6 +3,7 @@ package com.pnc.insurance.service.impl;
 import com.pnc.insurance.model.*;
 import com.pnc.insurance.repository.*;
 import com.pnc.insurance.service.UrlRequestService;
+import com.pnc.insurance.dto.UrlRequestCreateDto;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -58,12 +59,27 @@ public class UrlRequestServiceImpl implements UrlRequestService {
 
     // ✅ CREATE
     @Override
-    public UrlResponseDto saveUrlRequest(UrlRequest request) {
+    public UrlResponseDto saveUrlRequest(UrlRequestCreateDto requestDto) {
 
         UrlRequest url = new UrlRequest();
-        mapRequestToEntity(request, url);
+        mapDtoToEntity(requestDto, url);
 
-        return mapToDto(urlRepo.save(url));
+        // ✅ Check initial status immediately when creating
+        if (url.getStatus() == null || url.getStatus() == 0) {
+            try {
+                int initialStatus = checkUrlStatus(url.getBaseUrl());
+                url.setStatus(initialStatus);
+                System.out.println("✅ Initial status check for " + url.getTile() + " -> Status: " + initialStatus);
+            } catch (Exception e) {
+                System.err.println("❌ Failed initial status check for " + url.getTile() + ": " + e.getMessage());
+                url.setStatus(404); // Default to unreachable if check fails
+            }
+        }
+
+        UrlRequest savedUrl = urlRepo.save(url);
+
+        // Re-fetch to ensure relationships are loaded
+        return mapToDto(urlRepo.findById(savedUrl.getId()).orElse(savedUrl));
     }
 
     // ✅ UPDATE
@@ -77,6 +93,17 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         }
 
         mapRequestToEntity(request, existing);
+
+        // ✅ Re-check status if URL was updated
+        if (!existing.getBaseUrl().equals(request.getBaseUrl())) {
+            try {
+                int updatedStatus = checkUrlStatus(existing.getBaseUrl());
+                existing.setStatus(updatedStatus);
+                System.out.println("✅ Status re-checked for updated URL " + existing.getTile() + " -> Status: " + updatedStatus);
+            } catch (Exception e) {
+                System.err.println("❌ Failed status re-check for updated URL " + existing.getTile() + ": " + e.getMessage());
+            }
+        }
 
         return mapToDto(urlRepo.save(existing));
     }
@@ -123,6 +150,32 @@ public class UrlRequestServiceImpl implements UrlRequestService {
         // ✅ Section (no exception)
         if (request.getSection() != null && request.getSection().getId() != null) {
             sectionRepo.findById(request.getSection().getId())
+                    .ifPresent(entity::setSection);
+        }
+    }
+
+    private void mapDtoToEntity(UrlRequestCreateDto requestDto, UrlRequest entity) {
+
+        entity.setBaseUrl(requestDto.getBaseUrl());
+        entity.setTile(requestDto.getTile());
+        entity.setDescription(requestDto.getDescription());
+        entity.setStatus(requestDto.getStatus());
+
+        // ✅ Application (no exception)
+        if (requestDto.getApplication() != null && requestDto.getApplication().getId() != null) {
+            appRepo.findById(requestDto.getApplication().getId())
+                    .ifPresent(entity::setApplication);
+        }
+
+        // ✅ Environment (no exception)
+        if (requestDto.getEnvironment() != null && requestDto.getEnvironment().getId() != null) {
+            envRepo.findById(requestDto.getEnvironment().getId())
+                    .ifPresent(entity::setEnvironment);
+        }
+
+        // ✅ Section (no exception)
+        if (requestDto.getSection() != null && requestDto.getSection().getId() != null) {
+            sectionRepo.findById(requestDto.getSection().getId())
                     .ifPresent(entity::setSection);
         }
     }
@@ -207,6 +260,27 @@ public class UrlRequestServiceImpl implements UrlRequestService {
             return response.getStatusCode() == HttpStatus.OK ? 200 : 404;
         } catch (Exception e) {
             // Any exception (connection timeout, DNS error, etc.) means unreachable
+            return 404;
+        }
+    }
+
+    // ✅ PUBLIC METHOD: Check and update URL status
+    public int checkAndUpdateUrlStatus(Long id) {
+        UrlRequest url = urlRepo.findById(id).orElse(null);
+        if (url == null) {
+            throw new RuntimeException("URL not found");
+        }
+
+        try {
+            int status = checkUrlStatus(url.getBaseUrl());
+            url.setStatus(status);
+            urlRepo.save(url);
+            System.out.println("✅ Status check for " + url.getTile() + " -> Status: " + status);
+            return status;
+        } catch (Exception e) {
+            System.err.println("❌ Failed status check for " + url.getTile() + ": " + e.getMessage());
+            url.setStatus(404);
+            urlRepo.save(url);
             return 404;
         }
     }

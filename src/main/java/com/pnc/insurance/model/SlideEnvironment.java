@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class SlideEnvironment {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;     // DEV, QA, PROD

@@ -1,4 +1,5 @@
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\config\AppConfig.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\config\CorsConfig.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\config\CustomUserDetailsService.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\config\DataLoaderConfig.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\config\JwtAuthenticationFilter.java
@@ -10,9 +11,12 @@ C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insuranc
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\controller\AuthController.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\controller\DashboardController.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\controller\StatusController.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\controller\UrlParallelController.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\dto\AuthRequest.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\dto\AuthResponse.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\dto\ErrorResponse.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\dto\UrlParallelRequest.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\dto\UrlRequestCreateDto.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\enums\Status.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\exception\GlobalExceptionHandler.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\model\ApiStatusDto.java
@@ -40,8 +44,10 @@ C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insuranc
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\impl\SectionServiceImpl.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\impl\StatusServiceImpl.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\impl\TileServiceImpl.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\impl\UrlParallelServiceImpl.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\impl\UrlRequestServiceImpl.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\SectionService.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\StatusService.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\TileService.java
+C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\UrlParallelService.java
 C:\sabir\slide_insurance_project\vm-service-slide\src\main\java\com\pnc\insurance\service\UrlRequestService.java

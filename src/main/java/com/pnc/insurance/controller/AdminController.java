@@ -1,5 +1,6 @@
 package com.pnc.insurance.controller;
 
+import com.pnc.insurance.dto.UrlRequestCreateDto;
 import com.pnc.insurance.model.*;
 import com.pnc.insurance.service.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,21 +43,35 @@ public class AdminController {
     }
 
     @GetMapping("/url-requests/{id}")
-    @Operation(summary = "Get URL request by ID", description = "Retrieves a specific URL request by its ID.")
+    @Operation(summary = "Get URL request by ID", description = "Retrieves a specific URL request by its ID. If status is null, it will be checked automatically.")
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "URL request found", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UrlResponseDto.class))),
         @ApiResponse(responseCode = "404", description = "URL request not found")
     })
     public ResponseEntity<UrlResponseDto> getUrlRequestById(@PathVariable Long id) {
         UrlResponseDto dto = urlRequestService.getUrlRequestById(id);
+
+        // ✅ AUTO-CHECK STATUS if null (ACTIVE/INACTIVE status)
+        if (dto != null && dto.getStatus() == null) {
+            try {
+                System.out.println("🔍 Auto-checking status for URL: " + dto.getTile());
+                urlRequestService.checkAndUpdateUrlStatus(id);
+                // Re-fetch with updated status
+                dto = urlRequestService.getUrlRequestById(id);
+            } catch (Exception e) {
+                System.err.println("⚠️ Failed to auto-check status: " + e.getMessage());
+                // Continue anyway with null status
+            }
+        }
+
         return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/url-requests")
     @Operation(summary = "Create URL request", description = "Creates a new URL request.")
     @ApiResponse(responseCode = "201", description = "URL request created", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UrlResponseDto.class)))
-    public ResponseEntity<UrlResponseDto> createUrlRequest(@RequestBody UrlRequest urlRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(urlRequestService.saveUrlRequest(urlRequest));
+    public ResponseEntity<UrlResponseDto> createUrlRequest(@RequestBody UrlRequestCreateDto requestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(urlRequestService.saveUrlRequest(requestDto));
     }
 
     @PutMapping("/url-requests/{id}")
@@ -80,6 +95,25 @@ public class AdminController {
         try {
             urlRequestService.deleteUrlRequest(id);
             return ResponseEntity.ok("URL deleted successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/url-requests/{id}/refresh-status")
+    @Operation(summary = "Refresh URL status manually", description = "Manually trigger status check for a specific URL request.")
+    @ApiResponse(responseCode = "200", description = "Status refreshed successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UrlResponseDto.class)))
+    public ResponseEntity<UrlResponseDto> refreshUrlStatus(@PathVariable Long id) {
+        try {
+            // Trigger actual status check and update
+            urlRequestService.checkAndUpdateUrlStatus(id);
+
+            // Get updated DTO
+            UrlResponseDto dto = urlRequestService.getUrlRequestById(id);
+            if (dto == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(dto);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
@@ -282,3 +316,4 @@ public class AdminController {
     }
 
 }
+
